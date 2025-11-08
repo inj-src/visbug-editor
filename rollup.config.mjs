@@ -34,17 +34,6 @@ export default [
     plugins: [...basePlugins, ...prodPlugins],
     external: ["blingblingjs", "hotkeys-js"],
   },
-  // ESM build for browsers (bundled with deps)
-  {
-    input: "src/index.js",
-    output: {
-      file: "dist/visbug-editor.browser.js",
-      format: "es",
-      sourcemap: !isProd,
-    },
-    plugins: [...basePlugins, ...prodPlugins],
-    external: [], // Bundle everything for browser use
-  },
   // CommonJS build
   {
     input: "src/index.js",
@@ -68,6 +57,7 @@ export default [
       globals: {
         blingblingjs: "blingblingjs",
         "hotkeys-js": "hotkeys",
+        "colorjs.io": "Color",
       },
     },
     plugins: [...basePlugins, ...prodPlugins],
