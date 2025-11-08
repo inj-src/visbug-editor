@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VisBug Core - Simple Test</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        padding: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .status {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-radius: 4px;
+      }
+
+      .success {
+        background: #d4edda;
+        color: #155724;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+      }
+
+      .editable {
+        border: 2px dashed #ddd;
+        padding: 2rem;
+        min-height: 300px;
+        margin: 1rem 0;
+      }
+
+      .card {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+      }
+
+      button {
+        padding: 0.5rem 1rem;
+        margin: 0.25rem;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>VisBug Core - Simple Selection Test</h1>
+
+    <div id="status" class="status">Loading...</div>
+
+    <div>
+      <button onclick="testSelection()">Test Selection</button>
+      <button onclick="clearSelection()">Clear Selection</button>
+      <button onclick="showInfo()">Show Info</button>
+    </div>
+
+    <div id="editable" class="editable">
+      <h2>Click me!</h2>
+      <p>This paragraph is selectable.</p>
+      <div class="card">
+        <h3>Card Title</h3>
+        <p>Card content here.</p>
+      </div>
+      <button>A Button</button>
+    </div>
+
+    <div id="info" style="font-family: monospace; white-space: pre"></div>
+
+    <script type="module">
+      import { VisBugEditor } from "./dist/visbug-editor.browser.js";
+
+      const statusEl = document.getElementById("status");
+      const infoEl = document.getElementById("info");
+
+      try {
+        // Create editor
+        const editor = new VisBugEditor({
+          container: document.getElementById("editable"),
+          mode: "div",
+          onSelectionChange: (elements) => {
+            console.log("Selection changed:", elements);
+            updateInfo();
+          },
+        });
+
+        // Make editor global for buttons
+        window.visbugEditor = editor;
+
+        statusEl.className = "status success";
+        statusEl.textContent = "✅ Editor initialized! Try clicking on elements in the box below.";
+
+        function updateInfo() {
+          const selected = editor.getSelectedElements();
+          infoEl.textContent = `
+Selected Elements: ${selected.length}
+Elements: ${selected.map((el) => el.tagName).join(", ")}
+Can Undo: ${editor.canUndo()}
+Can Redo: ${editor.canRedo()}
+        `.trim();
+        }
+
+        // Expose functions globally
+        window.updateInfo = updateInfo;
+
+        updateInfo();
+      } catch (error) {
+        statusEl.className = "status error";
+        statusEl.textContent = "❌ Error: " + error.message;
+        console.error("Full error:", error);
+      }
+    </script>
+
+    <script>
+      // Global button handlers
+      function testSelection() {
+        const h2 = document.querySelector("#editable h2");
+        if (window.visbugEditor && h2) {
+          window.visbugEditor.selectElement(h2);
+          alert("Selected H2 element programmatically!");
+        }
+      }
+
+      function clearSelection() {
+        if (window.visbugEditor) {
+          window.visbugEditor.clearSelection();
+        }
+      }
+
+      function showInfo() {
+        if (window.visbugEditor) {
+          const selected = window.visbugEditor.getSelectedElements();
+          alert(
+            `Selected: ${selected.length} elements\n${selected.map((el) => el.tagName).join(", ")}`
+          );
+        }
+      }
+    </script>
+  </body>
+</html>

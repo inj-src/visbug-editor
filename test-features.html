@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VisBug Core - Features Test</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+
+      .controls {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .controls h2 {
+        margin-bottom: 15px;
+        font-size: 18px;
+        color: #333;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      button.active {
+        box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.3);
+      }
+
+      .btn-primary {
+        background: #0066ff;
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: #0052cc;
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: #e0e0e0;
+      }
+
+      .btn-success {
+        background: #34c759;
+        color: white;
+      }
+
+      .btn-success:hover:not(:disabled) {
+        background: #2da84a;
+      }
+
+      .status {
+        padding: 10px;
+        background: #f9f9f9;
+        border-left: 3px solid #0066ff;
+        border-radius: 4px;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      .status strong {
+        color: #0066ff;
+      }
+
+      .instructions {
+        background: #fff3cd;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        border-left: 3px solid #ffc107;
+      }
+
+      .instructions h3 {
+        margin-bottom: 10px;
+        color: #856404;
+      }
+
+      .instructions ul {
+        margin-left: 20px;
+        color: #856404;
+      }
+
+      .instructions li {
+        margin-bottom: 8px;
+      }
+
+      .instructions code {
+        background: #ffeaa7;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: "Courier New", monospace;
+      }
+
+      .editable-content {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        min-height: 500px;
+      }
+
+      .test-box {
+        padding: 20px;
+        margin: 10px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+      }
+
+      .test-box:hover {
+        border-color: #0066ff;
+        box-shadow: 0 2px 8px rgba(0, 102, 255, 0.2);
+      }
+
+      .test-box h3 {
+        margin-bottom: 10px;
+        color: #333;
+        font-size: 20px;
+      }
+
+      .test-box p {
+        color: #666;
+        line-height: 1.6;
+        font-size: 16px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .test-image {
+        width: 200px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+
+      .test-image:hover {
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>VisBug Core - All Features Test</h1>
+
+      <div class="controls">
+        <h2>Tool Selection</h2>
+        <div class="button-group">
+          <button id="positionToolBtn" class="btn-primary active">📐 Position Tool</button>
+          <button id="textToolBtn" class="btn-primary">✏️ Text Tool</button>
+          <button id="fontToolBtn" class="btn-primary">🔤 Font Tool</button>
+        </div>
+        <div class="status">
+          <strong>Active Tool:</strong>
+          <span id="activeToolText">position</span>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <h3>🎯 Position Tool (Default - Always Active)</h3>
+        <ul>
+          <li><strong>Move with Mouse:</strong> Click and drag selected elements</li>
+          <li>
+            <strong>Resize with Handles:</strong> Drag the 8 corner and edge handles (small squares)
+            to resize elements
+          </li>
+          <li><strong>Arrow Keys:</strong> Move 1px (Shift: 10px, Alt: 0.1px)</li>
+          <li>
+            <strong>Image Swap:</strong> Drag & drop images onto any img element (works in all
+            modes)
+          </li>
+        </ul>
+
+        <h3>✏️ Text Tool</h3>
+        <ul>
+          <li>Select element(s) then click "Text Tool" button</li>
+          <li>Content becomes editable - just start typing</li>
+          <li>Press <code>ESC</code> or click outside to finish editing</li>
+          <li>Changes are recorded in history</li>
+        </ul>
+
+        <h3>🔤 Font Tool</h3>
+        <ul>
+          <li><strong>Font Size:</strong> ↑/↓ arrows (Shift: larger increments)</li>
+          <li><strong>Letter Spacing:</strong> ←/→ arrows</li>
+          <li><strong>Line Height:</strong> Shift + ↑/↓ arrows</li>
+          <li><strong>Alignment:</strong> Shift + ←/→ arrows</li>
+          <li><strong>Bold:</strong> <code>Ctrl+B</code> or <code>Cmd+B</code></li>
+          <li><strong>Italic:</strong> <code>Ctrl+I</code> or <code>Cmd+I</code></li>
+          <li><strong>Font Weight:</strong> Ctrl/Cmd + ↑/↓</li>
+        </ul>
+
+        <h3>⌨️ Universal Shortcuts</h3>
+        <ul>
+          <li><strong>Undo:</strong> Ctrl/Cmd+Z</li>
+          <li><strong>Redo:</strong> Ctrl/Cmd+Y</li>
+          <li><strong>Duplicate:</strong> Ctrl/Cmd+D</li>
+          <li><strong>Delete:</strong> Delete or Backspace</li>
+          <li><strong>Deselect:</strong> ESC</li>
+        </ul>
+      </div>
+
+      <div class="controls">
+        <h2>History Controls</h2>
+        <div class="button-group">
+          <button id="undoBtn" class="btn-secondary" disabled>⟲ Undo</button>
+          <button id="redoBtn" class="btn-secondary" disabled>⟳ Redo</button>
+        </div>
+        <div class="status">
+          <strong>Can Undo:</strong> <span id="canUndoText">false</span> |
+          <strong>Can Redo:</strong> <span id="canRedoText">false</span>
+        </div>
+      </div>
+
+      <div class="editable-content" id="editableArea">
+        <div class="grid">
+          <div class="test-box" style="background-color: #e3f2fd">
+            <h3>Box 1</h3>
+            <p>Select me and try the Position Tool! Use arrow keys or drag me around.</p>
+          </div>
+
+          <div class="test-box" style="background-color: #f3e5f5">
+            <h3>Box 2</h3>
+            <p>Switch to Text Tool and edit my content directly!</p>
+          </div>
+
+          <div class="test-box" style="background-color: #e8f5e9">
+            <h3>Box 3</h3>
+            <p>Use the Font Tool to change my size, spacing, and style!</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 30px">
+          <h2>Image Swap Test</h2>
+          <p style="margin: 10px 0; color: #666">
+            Drag and drop an image file onto the image below to swap it:
+          </p>
+          <img src="https://placehold.co/600x400" alt="Placeholder" />
+        </div>
+
+        <div style="margin-top: 30px">
+          <h2>Typography Test</h2>
+          <p style="font-size: 16px; line-height: 1.6; max-width: 600px">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Select this text and use the
+            Font Tool to adjust size, spacing, and alignment. Try pressing Ctrl+B for bold or Ctrl+I
+            for italic!
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { VisBugEditor } from "./dist/visbug-editor.umd.js";
+
+      const container = document.getElementById("editableArea");
+      const positionToolBtn = document.getElementById("positionToolBtn");
+      const textToolBtn = document.getElementById("textToolBtn");
+      const fontToolBtn = document.getElementById("fontToolBtn");
+      const undoBtn = document.getElementById("undoBtn");
+      const redoBtn = document.getElementById("redoBtn");
+      const activeToolText = document.getElementById("activeToolText");
+      const canUndoText = document.getElementById("canUndoText");
+      const canRedoText = document.getElementById("canRedoText");
+
+      // Create editor with position tool as default
+      const editor = new VisBugEditor({
+        container: container,
+        mode: "div",
+        initialTool: "position",
+        onChange: (state) => {
+          updateHistoryUI();
+        },
+        onToolChange: (tool) => {
+          activeToolText.textContent = tool;
+          updateToolButtons(tool);
+        },
+      });
+
+      function updateToolButtons(activeTool) {
+        [positionToolBtn, textToolBtn, fontToolBtn].forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        if (activeTool === "position") {
+          positionToolBtn.classList.add("active");
+        } else if (activeTool === "text") {
+          textToolBtn.classList.add("active");
+        } else if (activeTool === "font") {
+          fontToolBtn.classList.add("active");
+        }
+      }
+
+      function updateHistoryUI() {
+        const canUndo = editor.canUndo();
+        const canRedo = editor.canRedo();
+
+        undoBtn.disabled = !canUndo;
+        redoBtn.disabled = !canRedo;
+        canUndoText.textContent = canUndo;
+        canRedoText.textContent = canRedo;
+      }
+
+      // Tool button handlers
+      positionToolBtn.addEventListener("click", () => {
+        editor.activateTool("position");
+      });
+
+      textToolBtn.addEventListener("click", () => {
+        editor.activateTool("text");
+      });
+
+      fontToolBtn.addEventListener("click", () => {
+        editor.activateTool("font");
+      });
+
+      // History button handlers
+      undoBtn.addEventListener("click", () => {
+        editor.undo();
+        updateHistoryUI();
+      });
+
+      redoBtn.addEventListener("click", () => {
+        editor.redo();
+        updateHistoryUI();
+      });
+
+      // Keyboard shortcuts for undo/redo
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+          e.preventDefault();
+          editor.undo();
+          updateHistoryUI();
+        }
+        if ((e.ctrlKey || e.metaKey) && (e.key === "y" || (e.key === "z" && e.shiftKey))) {
+          e.preventDefault();
+          editor.redo();
+          updateHistoryUI();
+        }
+      });
+
+      // Initial UI update
+      updateHistoryUI();
+
+      console.log("✅ VisBug Editor initialized with all features");
+      console.log("📐 Position Tool: Click and drag, or use arrow keys to move");
+      console.log("🔲 Resize: Drag the 8 handles (corners and edges) to resize");
+      console.log("✏️  Text Tool: Edit content directly");
+      console.log("🔤 Font Tool: Adjust typography with keyboard shortcuts");
+      console.log("🖼️  Image Swap: Drag & drop images (always active)");
+    </script>
+  </body>
+</html>

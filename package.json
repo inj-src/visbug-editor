@@ -1,0 +1,69 @@
+{
+  "name": "visbug-editor",
+  "version": "0.1.0",
+  "description": "Core editing features extracted from VisBug for use in web applications",
+  "main": "dist/visbug-editor.cjs.js",
+  "module": "dist/visbug-editor.esm.js",
+  "browser": "dist/visbug-editor.umd.js",
+  "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "import": "./dist/visbug-editor.esm.js",
+      "require": "./dist/visbug-editor.cjs.js",
+      "default": "./dist/visbug-editor.esm.js"
+    }
+  },
+  "files": [
+    "dist",
+    "types",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "build:prod": "rollup -c --environment BUILD:production",
+    "dev": "rollup -c -w",
+    "prepublishOnly": "npm run build:prod",
+    "verify": "node verify-package.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "visual-editor",
+    "wysiwyg",
+    "inline-editing",
+    "position-editor",
+    "text-editor",
+    "font-editor",
+    "image-swap",
+    "contenteditable",
+    "drag-and-drop",
+    "undo-redo",
+    "history-manager",
+    "typescript"
+  ],
+  "author": "Extracted from VisBug by Adam Argyle",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/GoogleChromeLabs/ProjectVisBug/tree/main/visbug-core",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GoogleChromeLabs/ProjectVisBug.git",
+    "directory": "visbug-editor"
+  },
+  "bugs": {
+    "url": "https://github.com/GoogleChromeLabs/ProjectVisBug/issues"
+  },
+  "dependencies": {
+    "blingblingjs": "^2.3.0",
+    "hotkeys-js": "^3.13.7"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "open-props": "^1.7.16",
+    "postcss-import": "^16.1.1",
+    "rollup": "^4.9.6",
+    "rollup-plugin-postcss": "^4.0.2"
+  }
+}

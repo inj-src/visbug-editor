@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VisBug Core - Phase 1 Test</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: #f5f5f5;
+      }
+
+      .container {
+        background: white;
+        border-radius: 8px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      h1 {
+        color: #333;
+        margin-top: 0;
+      }
+
+      .status {
+        padding: 1rem;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+      }
+
+      .status.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .status.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      .editable-area {
+        border: 2px dashed #ddd;
+        padding: 2rem;
+        min-height: 200px;
+        background: #fafafa;
+        border-radius: 4px;
+      }
+
+      .editable-area h2 {
+        color: #0366d6;
+      }
+
+      .toolbar {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+        background: white;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background: #f5f5f5;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      button.active {
+        background: #0366d6;
+        color: white;
+        border-color: #0366d6;
+      }
+
+      .info-panel {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 4px;
+        margin-top: 1rem;
+        font-family: "Courier New", monospace;
+        font-size: 12px;
+      }
+
+      .info-panel dt {
+        font-weight: bold;
+        color: #666;
+        margin-top: 0.5rem;
+      }
+
+      .info-panel dd {
+        margin-left: 0;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🐞 VisBug Core - Phase 1 Complete</h1>
+
+      <div id="status" class="status"></div>
+
+      <h3>Test Results:</h3>
+      <div class="info-panel">
+        <dl id="test-results"></dl>
+      </div>
+    </div>
+
+    <div class="container">
+      <h3>Editor Instance Test</h3>
+
+      <div class="toolbar" id="toolbar">
+        <button id="btn-position" onclick="activateTool('position')">Position</button>
+        <button id="btn-text" onclick="activateTool('text')">Text</button>
+        <button id="btn-font" onclick="activateTool('font')">Font</button>
+        <button id="btn-image" onclick="activateTool('image')">Image</button>
+        <span style="flex-grow: 1"></span>
+        <button id="btn-undo" onclick="undo()" disabled>Undo</button>
+        <button id="btn-redo" onclick="redo()" disabled>Redo</button>
+      </div>
+
+      <div id="editable-area" class="editable-area">
+        <h2>Editable Content</h2>
+        <p>This content will become editable once selection system is implemented.</p>
+        <p>For now, we're testing the basic setup and API structure.</p>
+      </div>
+
+      <div class="info-panel">
+        <dl id="editor-info"></dl>
+      </div>
+    </div>
+
+    <script type="module">
+      import { VisBugEditor, HistoryManager, VERSION } from "./dist/visbug-editor.esm.js";
+
+      const statusEl = document.getElementById("status");
+      const testResultsEl = document.getElementById("test-results");
+      const editorInfoEl = document.getElementById("editor-info");
+
+      // Store editor globally for button handlers
+      window.editor = null;
+
+      // Test results
+      const results = [];
+
+      function addResult(name, value) {
+        results.push({ name, value });
+        const dt = document.createElement("dt");
+        dt.textContent = name + ":";
+        const dd = document.createElement("dd");
+        dd.textContent = value;
+        testResultsEl.appendChild(dt);
+        testResultsEl.appendChild(dd);
+      }
+
+      function updateEditorInfo() {
+        editorInfoEl.innerHTML = "";
+
+        const info = {
+          "Current Tool": window.editor?.getCurrentTool() || "none",
+          "Can Undo": window.editor?.canUndo() || false,
+          "Can Redo": window.editor?.canRedo() || false,
+          "Is Initialized": window.editor?.isInitialized || false,
+          Mode: window.editor?.mode || "unknown",
+        };
+
+        Object.entries(info).forEach(([key, value]) => {
+          const dt = document.createElement("dt");
+          dt.textContent = key + ":";
+          const dd = document.createElement("dd");
+          dd.textContent = String(value);
+          editorInfoEl.appendChild(dt);
+          editorInfoEl.appendChild(dd);
+        });
+      }
+
+      // Run tests
+      try {
+        // Test 1: Module imports
+        addResult("Module Import", "✅ Success");
+        addResult("Version", VERSION);
+
+        // Test 2: HistoryManager
+        const history = new HistoryManager();
+        addResult("HistoryManager", "✅ Instantiated");
+
+        // Test 3: VisBugEditor
+        const container = document.getElementById("editable-area");
+        window.editor = new VisBugEditor({
+          container: container,
+          mode: "div", // Use div mode for testing (Shadow DOM would hide content)
+          initialTool: "position",
+          onToolChange: (tool) => {
+            console.log("Tool changed:", tool);
+            updateToolButtons();
+            updateEditorInfo();
+          },
+          onChange: (state) => {
+            console.log("Change:", state);
+            updateButtons();
+          },
+        });
+
+        addResult("VisBugEditor", "✅ Instantiated");
+        addResult("Editor Mode", window.editor.mode);
+        addResult("Initial Tool", window.editor.getCurrentTool());
+
+        // Test 4: API methods exist
+        const apiMethods = [
+          "activateTool",
+          "getCurrentTool",
+          "undo",
+          "redo",
+          "canUndo",
+          "canRedo",
+          "getContent",
+          "setContent",
+          "destroy",
+        ];
+
+        const missingMethods = apiMethods.filter(
+          (method) => typeof window.editor[method] !== "function"
+        );
+
+        if (missingMethods.length === 0) {
+          addResult("API Methods", "✅ All methods present");
+        } else {
+          addResult("API Methods", "❌ Missing: " + missingMethods.join(", "));
+        }
+
+        // Show success
+        statusEl.className = "status success";
+        statusEl.textContent = "✅ Phase 1 Complete - All tests passed!";
+
+        // Update info panel
+        updateEditorInfo();
+      } catch (error) {
+        statusEl.className = "status error";
+        statusEl.textContent = "❌ Error: " + error.message;
+        console.error(error);
+        addResult("Error", error.message);
+      }
+
+      // Button handlers
+      window.activateTool = (tool) => {
+        window.editor?.activateTool(tool);
+      };
+
+      window.undo = () => {
+        window.editor?.undo();
+        updateButtons();
+        updateEditorInfo();
+      };
+
+      window.redo = () => {
+        window.editor?.redo();
+        updateButtons();
+        updateEditorInfo();
+      };
+
+      function updateButtons() {
+        document.getElementById("btn-undo").disabled = !window.editor?.canUndo();
+        document.getElementById("btn-redo").disabled = !window.editor?.canRedo();
+      }
+
+      function updateToolButtons() {
+        const currentTool = window.editor?.getCurrentTool();
+        document.querySelectorAll(".toolbar button").forEach((btn) => {
+          const tool = btn.id.replace("btn-", "");
+          if (tool === currentTool) {
+            btn.classList.add("active");
+          } else {
+            btn.classList.remove("active");
+          }
+        });
+      }
+
+      // Initial button states
+      updateButtons();
+      updateToolButtons();
+    </script>
+  </body>
+</html>

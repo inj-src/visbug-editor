@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VisBug Core - Undo/Redo Test</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .controls {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .controls h2 {
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .button-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+      }
+
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-primary {
+        background: #0066ff;
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: #0052cc;
+      }
+
+      .btn-danger {
+        background: #ff3b30;
+        color: white;
+      }
+
+      .btn-danger:hover:not(:disabled) {
+        background: #cc2f26;
+      }
+
+      .btn-secondary {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: #e0e0e0;
+      }
+
+      .status {
+        padding: 10px;
+        background: #f9f9f9;
+        border-left: 3px solid #0066ff;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .status strong {
+        color: #0066ff;
+      }
+
+      .editable-content {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        min-height: 400px;
+      }
+
+      .test-box {
+        padding: 20px;
+        margin: 10px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        background: #fff;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .test-box:hover {
+        border-color: #0066ff;
+        box-shadow: 0 2px 8px rgba(0, 102, 255, 0.2);
+      }
+
+      .test-box h3 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .test-box p {
+        color: #666;
+        line-height: 1.5;
+      }
+
+      .instructions {
+        background: #fff3cd;
+        padding: 15px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        border-left: 3px solid #ffc107;
+      }
+
+      .instructions h3 {
+        margin-bottom: 10px;
+        color: #856404;
+      }
+
+      .instructions ol {
+        margin-left: 20px;
+        color: #856404;
+      }
+
+      .instructions li {
+        margin-bottom: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>VisBug Core - Undo/Redo Test</h1>
+
+      <div class="controls">
+        <h2>History Controls</h2>
+
+        <div class="button-group">
+          <button id="undoBtn" class="btn-primary" disabled>⟲ Undo (Ctrl+Z)</button>
+          <button id="redoBtn" class="btn-primary" disabled>⟳ Redo (Ctrl+Y)</button>
+          <button id="clearBtn" class="btn-secondary">Clear History</button>
+        </div>
+
+        <div class="status">
+          <strong>Status:</strong> <span id="statusText">Ready</span> | <strong>Can Undo:</strong>
+          <span id="canUndoText">false</span> | <strong>Can Redo:</strong>
+          <span id="canRedoText">false</span> | <strong>History Size:</strong>
+          <span id="historySizeText">0</span>
+        </div>
+      </div>
+
+      <div class="instructions">
+        <h3>Test Instructions:</h3>
+        <ol>
+          <li>
+            <strong>Select elements:</strong> Click on any box below to select it (Shift+Click for
+            multi-select)
+          </li>
+          <li><strong>Duplicate (Ctrl+D):</strong> Creates a copy of selected element(s)</li>
+          <li><strong>Delete (Delete/Backspace):</strong> Removes selected element(s)</li>
+          <li>
+            <strong>Clear Styles (Alt+Delete):</strong> Removes inline styles from selected
+            element(s)
+          </li>
+          <li>
+            <strong>Undo (Ctrl+Z):</strong> Undoes the last action - should restore deleted
+            elements, remove duplicates, restore styles
+          </li>
+          <li><strong>Redo (Ctrl+Y):</strong> Redoes the last undone action</li>
+          <li><strong>Press Esc:</strong> Clears selection</li>
+        </ol>
+      </div>
+
+      <div class="controls">
+        <h2>Quick Actions (for testing)</h2>
+        <div class="button-group">
+          <button id="duplicateBtn" class="btn-secondary" disabled>
+            Duplicate Selected (Ctrl+D)
+          </button>
+          <button id="deleteBtn" class="btn-danger" disabled>Delete Selected (Delete)</button>
+          <button id="clearStylesBtn" class="btn-secondary" disabled>
+            Clear Styles (Alt+Delete)
+          </button>
+        </div>
+      </div>
+
+      <div class="editable-content" id="editableArea">
+        <div class="test-box" style="background-color: #e3f2fd">
+          <h3>Box 1</h3>
+          <p>Click to select. Try duplicating, deleting, and using undo/redo!</p>
+        </div>
+
+        <div class="test-box" style="background-color: #f3e5f5">
+          <h3>Box 2</h3>
+          <p>Shift+Click to multi-select. All actions work on multiple elements.</p>
+        </div>
+
+        <div class="test-box" style="background-color: #e8f5e9">
+          <h3>Box 3</h3>
+          <p>Use Alt+Delete to clear inline styles, then undo to restore them!</p>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { VisBugEditor } from "./dist/visbug-editor.browser.js";
+
+      const container = document.getElementById("editableArea");
+      const undoBtn = document.getElementById("undoBtn");
+      const redoBtn = document.getElementById("redoBtn");
+      const clearBtn = document.getElementById("clearBtn");
+      const duplicateBtn = document.getElementById("duplicateBtn");
+      const deleteBtn = document.getElementById("deleteBtn");
+      const clearStylesBtn = document.getElementById("clearStylesBtn");
+      const statusText = document.getElementById("statusText");
+      const canUndoText = document.getElementById("canUndoText");
+      const canRedoText = document.getElementById("canRedoText");
+      const historySizeText = document.getElementById("historySizeText");
+
+      // Create editor
+      const editor = new VisBugEditor({
+        container: container,
+        mode: "div",
+        onChange: (state) => {
+          updateUI();
+        },
+        onSelectionChange: (elements) => {
+          updateUI();
+          statusText.textContent =
+            elements.length > 0 ? `${elements.length} element(s) selected` : "Ready";
+        },
+      });
+
+      function updateUI() {
+        const canUndo = editor.canUndo();
+        const canRedo = editor.canRedo();
+        const hasSelection = editor.getSelectedElements().length > 0;
+
+        undoBtn.disabled = !canUndo;
+        redoBtn.disabled = !canRedo;
+        duplicateBtn.disabled = !hasSelection;
+        deleteBtn.disabled = !hasSelection;
+        clearStylesBtn.disabled = !hasSelection;
+
+        canUndoText.textContent = canUndo;
+        canRedoText.textContent = canRedo;
+
+        const history = editor.getHistory();
+        historySizeText.textContent = history.length;
+      }
+
+      // Button handlers
+      undoBtn.addEventListener("click", () => {
+        const success = editor.undo();
+        statusText.textContent = success ? "Undo successful!" : "Undo failed";
+        updateUI();
+      });
+
+      redoBtn.addEventListener("click", () => {
+        const success = editor.redo();
+        statusText.textContent = success ? "Redo successful!" : "Redo failed";
+        updateUI();
+      });
+
+      clearBtn.addEventListener("click", () => {
+        editor.clearHistory();
+        statusText.textContent = "History cleared";
+        updateUI();
+      });
+
+      duplicateBtn.addEventListener("click", () => {
+        const selected = editor.getSelectedElements();
+        if (selected.length > 0) {
+          // Trigger Ctrl+D event
+          const event = new KeyboardEvent("keydown", {
+            key: "d",
+            code: "KeyD",
+            ctrlKey: true,
+            metaKey: true,
+            bubbles: true,
+          });
+          document.dispatchEvent(event);
+          statusText.textContent = `Duplicated ${selected.length} element(s)`;
+        }
+      });
+
+      deleteBtn.addEventListener("click", () => {
+        const selected = editor.getSelectedElements();
+        if (selected.length > 0) {
+          const count = selected.length;
+          // Trigger Delete event
+          const event = new KeyboardEvent("keydown", {
+            key: "Delete",
+            code: "Delete",
+            bubbles: true,
+          });
+          document.dispatchEvent(event);
+          statusText.textContent = `Deleted ${count} element(s)`;
+        }
+      });
+
+      clearStylesBtn.addEventListener("click", () => {
+        const selected = editor.getSelectedElements();
+        if (selected.length > 0) {
+          // Trigger Alt+Delete event
+          const event = new KeyboardEvent("keydown", {
+            key: "Delete",
+            code: "Delete",
+            altKey: true,
+            bubbles: true,
+          });
+          document.dispatchEvent(event);
+          statusText.textContent = `Cleared styles on ${selected.length} element(s)`;
+        }
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "z") {
+          e.preventDefault();
+          editor.undo();
+          updateUI();
+        }
+        if ((e.ctrlKey || e.metaKey) && e.key === "y") {
+          e.preventDefault();
+          editor.redo();
+          updateUI();
+        }
+      });
+
+      // Initial UI update
+      updateUI();
+
+      console.log("VisBug Editor initialized:", editor);
+      console.log("Try the following:");
+      console.log("1. Click to select elements");
+      console.log("2. Ctrl+D to duplicate");
+      console.log("3. Delete to remove");
+      console.log("4. Alt+Delete to clear styles");
+      console.log("5. Ctrl+Z to undo");
+      console.log("6. Ctrl+Y to redo");
+    </script>
+  </body>
+</html>
