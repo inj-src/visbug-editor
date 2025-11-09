@@ -61,6 +61,7 @@ export class VisBugEditor {
     this.activeFeature = null;
     this.selectorEngine = null;
     this.isInitialized = false;
+    this.ignoreSelectors = []; // CSS selectors to ignore for hover and select
 
     // Determine where to append UI elements
     // undefined (default) = append to body
@@ -289,6 +290,27 @@ export class VisBugEditor {
    */
   clearHistory() {
     this.historyManager.clear();
+  }
+
+  /**
+   * Set CSS selectors to ignore for hover and select actions
+   * @param {string[]} selectors - Array of CSS selector strings to ignore
+   * @returns {VisBugEditor} - Returns this for method chaining
+   */
+  ignoreList(selectors) {
+    if (!Array.isArray(selectors)) {
+      throw new Error("ignoreList expects an array of CSS selector strings");
+    }
+    this.ignoreSelectors = selectors;
+    return this;
+  }
+
+  /**
+   * Get the current ignore list
+   * @returns {string[]}
+   */
+  getIgnoreList() {
+    return [...this.ignoreSelectors];
   }
 
   /**

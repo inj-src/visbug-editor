@@ -18,4 +18,4 @@ export { HistoryManager } from "./features/history.js";
 export * as utilities from "./utilities/index.js";
 
 // Version
-export const VERSION = "0.1.0";
+export const VERSION = "0.2.0";

@@ -44,6 +44,27 @@ export function Selectable(editor) {
   };
 
   /**
+   * Check if an element matches any selector in the ignore list
+   * @param {HTMLElement} element - The element to check
+   * @returns {boolean} - True if element should be ignored
+   */
+  const isIgnored = (element) => {
+    if (!element || !editor.ignoreSelectors || editor.ignoreSelectors.length === 0) {
+      return false;
+    }
+
+    return editor.ignoreSelectors.some((selector) => {
+      try {
+        return element.matches(selector);
+      } catch (e) {
+        // Invalid selector, skip it
+        console.warn(`Invalid CSS selector in ignore list: ${selector}`);
+        return false;
+      }
+    });
+  };
+
+  /**
    * Start listening for selection events
    */
   const listen = () => {
@@ -90,7 +111,11 @@ export function Selectable(editor) {
   const on_click = (e) => {
     const $target = deepElementFromPoint(e.clientX, e.clientY);
 
-    if (isOffBounds($target) && !selected.filter((el) => el == $target).length) return;
+    if (
+      (isOffBounds($target) || isIgnored($target)) &&
+      !selected.filter((el) => el == $target).length
+    )
+      return;
 
     e.preventDefault();
     if (!e.altKey) e.stopPropagation();
@@ -124,7 +149,7 @@ export function Selectable(editor) {
   const on_hover = (e) => {
     const $target = deepElementFromPoint(e.clientX, e.clientY);
 
-    if (isOffBounds($target)) {
+    if (isOffBounds($target) || isIgnored($target)) {
       if (hover_state.element) clearHover();
       return;
     }
@@ -140,12 +165,11 @@ export function Selectable(editor) {
     hover_state.element = createHoverIndicator($target);
     hover_state.label = createLabelIndicator($target, combineNodeNameAndClass($target));
   };
-
   /**
    * Select an element
    */
   const select = ($el) => {
-    if (isOffBounds($el) || $el.hasAttribute("data-pseudo-select")) return;
+    if (isOffBounds($el) || isIgnored($el) || $el.hasAttribute("data-pseudo-select")) return;
 
     // Don't clear existing selection if element is already selected
     if ($el.hasAttribute("data-selected")) return;

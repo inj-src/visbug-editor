@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VisBugEditor - Ignore List Example</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      .editable-area {
+        background-color: white;
+        border: 2px solid #333;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 4px;
+      }
+
+      .editable-area h2 {
+        margin-top: 0;
+      }
+
+      .header {
+        background-color: #ddd;
+        padding: 10px;
+        margin-bottom: 20px;
+      }
+
+      .ignored-element {
+        background-color: #ffcccc;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ff0000;
+      }
+
+      .selectable-element {
+        background-color: #ccffcc;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #00aa00;
+      }
+
+      button {
+        padding: 10px 15px;
+        margin: 5px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .info {
+        background-color: #e3f2fd;
+        padding: 15px;
+        border-left: 4px solid #2196f3;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>VisBugEditor - Ignore List Feature</h1>
+
+    <div class="info">
+      <h3>Usage Example:</h3>
+      <pre><code>const editor = new VisBugEditor({
+  container: document.getElementById('editable-area')
+});
+
+// Set elements to ignore during hover and selection
+editor.ignoreList([".header", ".ignored-element"]);
+
+// Get current ignore list
+const ignored = editor.getIgnoreList();
+</code></pre>
+    </div>
+
+    <div class="editable-area" id="editable-area">
+      <h2>Editable Content Area</h2>
+
+      <div class="header">
+        <strong>This header element is IGNORED</strong> - You cannot hover or select this
+      </div>
+
+      <div class="selectable-element">
+        <strong>This element IS SELECTABLE</strong> - You can hover and select this
+      </div>
+
+      <div class="ignored-element">
+        <strong>This ignored element is RED</strong> - You cannot hover or select this
+      </div>
+
+      <p>This is a normal paragraph - you can select this</p>
+
+      <button>This is a button - ignored or selectable depending on ignore list</button>
+    </div>
+
+    <div class="info">
+      <h3>Controls:</h3>
+      <button onclick="updateIgnoreList()">Ignore .header and .ignored-element</button>
+      <button onclick="clearIgnoreList()">Clear Ignore List</button>
+      <button onclick="addIgnoreButton()">Also Ignore Buttons</button>
+    </div>
+
+    <script type="module">
+      import { VisBugEditor } from "./dist/visbug-editor.browser.js";
+
+      window.editor = new VisBugEditor({
+        container: document.getElementById("editable-area"),
+        initialTool: "position",
+      });
+
+      window.updateIgnoreList = function () {
+        window.editor.ignoreList([".header", ".ignored-element"]);
+        console.log("Updated ignore list:", window.editor.getIgnoreList());
+        alert("Ignore list updated! Try hovering/clicking on .header and .ignored-element");
+      };
+
+      window.clearIgnoreList = function () {
+        window.editor.ignoreList([]);
+        console.log("Cleared ignore list");
+        alert("Ignore list cleared! Now you can select all elements");
+      };
+
+      window.addIgnoreButton = function () {
+        const currentList = window.editor.getIgnoreList();
+        window.editor.ignoreList([...currentList, "button"]);
+        console.log("Updated ignore list:", window.editor.getIgnoreList());
+        alert("Added 'button' to ignore list!");
+      };
+
+      // Set initial ignore list
+      window.updateIgnoreList();
+    </script>
+  </body>
+</html>

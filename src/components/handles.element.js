@@ -28,7 +28,6 @@ export class Handles extends HTMLElement {
     window.requestAnimationFrame(() => {
       const node_label_id = this.$shadow.host.getAttribute("data-label-id");
       const [source_el] = $(`[data-label-id="${node_label_id}"]`);
-
       if (!source_el) return;
 
       this.position = {
