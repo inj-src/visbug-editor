@@ -41,21 +41,21 @@ yarn add visbug-editor
 ### Basic Usage
 
 ```javascript
-import { VisBugEditor } from 'visbug-editor';
+import { VisBugEditor } from "visbug-editor";
 
 const editor = new VisBugEditor({
-  container: document.getElementById('editable-area'),
-  initialTool: 'position',
-  onToolChange: (tool) => console.log('Tool changed:', tool),
-  onSelectionChange: (elements) => console.log('Selected:', elements),
+  container: document.getElementById("editable-area"),
+  initialTool: "position",
+  onToolChange: (tool) => console.log("Tool changed:", tool),
+  onSelectionChange: (elements) => console.log("Selected:", elements),
   onChange: ({ canUndo, canRedo }) => {
-    console.log('Can undo:', canUndo, 'Can redo:', canRedo);
-  }
+    console.log("Can undo:", canUndo, "Can redo:", canRedo);
+  },
 });
 
 // Switch tools
-editor.activateTool('text');
-editor.activateTool('font');
+editor.activateTool("text");
+editor.activateTool("font");
 
 // Undo/Redo
 editor.undo();
@@ -63,7 +63,7 @@ editor.redo();
 
 // Get/Set content
 const html = editor.getContent();
-editor.setContent('<h1>New content</h1>');
+editor.setContent("<h1>New content</h1>");
 
 // Clean up
 editor.destroy();
@@ -74,15 +74,15 @@ editor.destroy();
 Full TypeScript support with complete type definitions:
 
 ```typescript
-import { VisBugEditor, VisBugEditorOptions } from 'visbug-editor';
+import { VisBugEditor, VisBugEditorOptions } from "visbug-editor";
 
 const options: VisBugEditorOptions = {
-  container: document.getElementById('app')!,
-  mode: 'shadowDOM',
-  initialTool: 'position',
+  container: document.getElementById("app")!,
+  mode: "shadowDOM",
+  initialTool: "position",
   onToolChange: (tool: string) => {
-    console.log('Tool:', tool);
-  }
+    console.log("Tool:", tool);
+  },
 };
 
 const editor = new VisBugEditor(options);
@@ -94,7 +94,7 @@ The container's **children** become editable, not the container itself:
 
 ```javascript
 const editor = new VisBugEditor({
-  container: document.getElementById('my-container')
+  container: document.getElementById("my-container"),
   // Children of my-container are now editable
 });
 ```
@@ -107,9 +107,9 @@ The container acts as the "editing canvas" boundary.
 
 ```typescript
 interface VisBugEditorOptions {
-  container: HTMLElement;              // Required: editing canvas
-  mode?: 'inside';                     // Where to append UI elements
-  initialTool?: 'position' | 'text' | 'font';
+  container: HTMLElement; // Required: editing canvas
+  mode?: "inside"; // Where to append UI elements
+  initialTool?: "position" | "text" | "font";
   onToolChange?: (tool: string) => void;
   onSelectionChange?: (elements: HTMLElement[]) => void;
   onChange?: (state: { canUndo: boolean; canRedo: boolean }) => void;
@@ -124,38 +124,40 @@ interface VisBugEditorOptions {
 The `mode` option controls where editor UI elements (labels, handles, overlays) are appended:
 
 **Undefined (default)** - Append to `document.body`
+
 - UI overlays can extend beyond container boundaries
 - Standard behavior for full-page editing
 - Use when container might have `overflow: hidden` or positioning constraints
 
 ```javascript
 const editor = new VisBugEditor({
-  container: document.getElementById('app')
+  container: document.getElementById("app"),
   // mode undefined - UI appends to document.body
 });
 ```
 
 **'inside'** - Append to the container element
+
 - UI stays within container bounds
 - Useful for isolated editing areas or embedded editors
 - Good for multiple editors on the same page
 
 ```javascript
 const editor = new VisBugEditor({
-  container: document.getElementById('app'),
-  mode: 'inside' // UI appends to container
+  container: document.getElementById("app"),
+  mode: "inside", // UI appends to container
 });
 ```
 
 ### Key Methods
 
-| Method | Purpose |
-|--------|---------|
-| `activateTool(name)` | Switch tools: 'position', 'text', 'font' |
-| `undo()` / `redo()` | Undo/redo changes |
-| `getContent()` / `setContent(html)` | Get/set HTML |
-| `selectElement(el)` / `clearSelection()` | Manage selection |
-| `destroy()` | Cleanup |
+| Method                                   | Purpose                                  |
+| ---------------------------------------- | ---------------------------------------- |
+| `activateTool(name)`                     | Switch tools: 'position', 'text', 'font' |
+| `undo()` / `redo()`                      | Undo/redo changes                        |
+| `getContent()` / `setContent(html)`      | Get/set HTML                             |
+| `selectElement(el)` / `clearSelection()` | Manage selection                         |
+| `destroy()`                              | Cleanup                                  |
 
 ## Tools
 
@@ -178,26 +180,32 @@ Click on any element to edit its text content inline using contenteditable. Pres
 Typography controls with keyboard shortcuts:
 
 **Font Size**
+
 - `Cmd/Ctrl + Up` - Increase font size
 - `Cmd/Ctrl + Down` - Decrease font size
 
 **Letter Spacing (Kerning)**
+
 - `Cmd/Ctrl + Shift + Up` - Increase letter spacing
 - `Cmd/Ctrl + Shift + Down` - Decrease letter spacing
 
 **Line Height (Leading)**
+
 - `Alt + Up` - Increase line height
 - `Alt + Down` - Decrease line height
 
 **Font Weight**
+
 - `Cmd/Ctrl + B` - Toggle bold
 
 **Font Style**
+
 - `Cmd/Ctrl + I` - Toggle italic
 
 ### Image Swap (Always Active)
 
 Drag and drop images onto any `<img>` tag or element with a background image to replace it. Supports:
+
 - Direct image URL replacement
 - Custom upload handler via `onImageUpload` callback
 
@@ -206,8 +214,8 @@ Drag and drop images onto any `<img>` tag or element with a background image to 
 ### React
 
 ```jsx
-import { useEffect, useRef } from 'react';
-import { VisBugEditor } from 'visbug-editor';
+import { useEffect, useRef } from "react";
+import { VisBugEditor } from "visbug-editor";
 
 export default function Editor() {
   const containerRef = useRef(null);
@@ -215,7 +223,7 @@ export default function Editor() {
 
   useEffect(() => {
     editorRef.current = new VisBugEditor({
-      container: containerRef.current
+      container: containerRef.current,
     });
     return () => editorRef.current?.destroy();
   }, []);
@@ -223,7 +231,9 @@ export default function Editor() {
   return (
     <>
       <button onClick={() => editorRef.current?.undo()}>Undo</button>
-      <div ref={containerRef}><h1>Editable</h1></div>
+      <div ref={containerRef}>
+        <h1>Editable</h1>
+      </div>
     </>
   );
 }
@@ -238,8 +248,8 @@ export default function Editor() {
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { VisBugEditor } from 'visbug-editor';
+import { ref, onMounted, onUnmounted } from "vue";
+import { VisBugEditor } from "visbug-editor";
 
 const container = ref(null);
 let editor = null;
