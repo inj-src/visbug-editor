@@ -120,7 +120,7 @@ interface VisBugEditorOptions {
 
 - **Position**: Drag or use arrow keys (1px), Shift+arrow (10px), Alt+arrow (0.5px)
 - **Text**: Click to edit inline with contenteditable
-- **Font**: Cmd/Ctrl+↑/↓ (size), Cmd/Ctrl+Shift+↑/↓ (letter spacing), Alt+↑/↓ (line height), Cmd/Ctrl+B (bold), Cmd/Ctrl+I (italic)
+- **Font**: ↑/↓ (Size), Cmd/Ctrl+↑/↓ (weight), Shift+↑/↓ (line height), Shift+ ←/→ (Letter spacing), ←/→ Alignment  
 - **Image**: Drag-drop images onto `<img>` tags to replace
 
 ## Examples
@@ -205,3 +205,7 @@ editor.setContent(html);
 ## Browser Support
 
 Chrome/Edge 80+, Firefox 75+, Safari 13.1+ (requires ES6 modules, custom elements, shadow DOM support)
+
+## Remaining features 
+
+Remaining features will be added soon or open an issue for future are requests. Contributions are happily accepted.
