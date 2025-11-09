@@ -29,6 +29,7 @@ import {
 export function Selectable(editor) {
   const container = editor.container;
   const historyManager = editor.historyManager;
+  const uiContainer = editor.getUIContainer(); // Where to append UI elements
 
   let selected = [];
   let selectedCallbacks = [];
@@ -302,10 +303,12 @@ export function Selectable(editor) {
 
     hover.position = {
       el: $el,
+      boundingRect: rect,
       isFixed: isFixed($el),
+      uiContainer: uiContainer, // Pass container for offset calculation
     };
 
-    document.body.appendChild(hover);
+    uiContainer.appendChild(hover);
     return hover;
   };
 
@@ -326,11 +329,12 @@ export function Selectable(editor) {
     label.position = {
       boundingRect: rect,
       isFixed: isFixed($el),
+      uiContainer: uiContainer, // Pass container for offset calculation
     };
 
     if (id) label.setAttribute("data-label-id", id);
 
-    document.body.appendChild(label);
+    uiContainer.appendChild(label);
     return label;
   };
 
@@ -345,6 +349,7 @@ export function Selectable(editor) {
       el: $el,
       node_label_id: id,
       isFixed: isFixed($el),
+      uiContainer: uiContainer, // Pass container for offset calculation
     };
 
     handle.setAttribute("data-label-id", id);
@@ -352,7 +357,7 @@ export function Selectable(editor) {
     // Attach historyManager for resize tracking
     handle.historyManager = historyManager;
 
-    document.body.appendChild(handle);
+    uiContainer.appendChild(handle);
     return handle;
   };
 
@@ -364,6 +369,7 @@ export function Selectable(editor) {
     label.update = {
       boundingRect: el.getBoundingClientRect(),
       isFixed: isFixed(el),
+      uiContainer: uiContainer, // Pass container for offset calculation
     };
   };
 
@@ -375,6 +381,7 @@ export function Selectable(editor) {
       el,
       node_label_id: el.getAttribute("data-label-id"),
       isFixed: isFixed(el),
+      uiContainer: uiContainer, // Pass container for offset calculation
     };
   };
 

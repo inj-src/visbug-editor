@@ -2,16 +2,16 @@
   "name": "visbug-editor",
   "version": "0.1.0",
   "description": "Core editing features extracted from VisBug for use in web applications",
-  "main": "dist/visbug-editor.cjs.js",
-  "module": "dist/visbug-editor.esm.js",
-  "browser": "dist/visbug-editor.umd.js",
+  "main": "dist/visbug-core.cjs.js",
+  "module": "dist/visbug-core.esm.js",
+  "browser": "dist/visbug-core.umd.js",
   "types": "types/index.d.ts",
   "exports": {
     ".": {
       "types": "./types/index.d.ts",
-      "import": "./dist/visbug-editor.esm.js",
-      "require": "./dist/visbug-editor.cjs.js",
-      "default": "./dist/visbug-editor.esm.js"
+      "import": "./dist/visbug-core.esm.js",
+      "require": "./dist/visbug-core.cjs.js",
+      "default": "./dist/visbug-core.esm.js"
     }
   },
   "files": [
@@ -44,18 +44,17 @@
   ],
   "author": "Extracted from VisBug by Adam Argyle",
   "license": "Apache-2.0",
-  "homepage": "https://github.com/inj-src/visbug-editor",
+  "homepage": "https://github.com/GoogleChromeLabs/ProjectVisBug/tree/main/visbug-core",
   "repository": {
     "type": "git",
-    "url": "https://github.com/inj-src/visbug-editor.git",
+    "url": "https://github.com/GoogleChromeLabs/ProjectVisBug.git",
     "directory": "visbug-editor"
   },
   "bugs": {
-    "url": "https://github.com/inj-src/visbug-editor/issues"
+    "url": "https://github.com/GoogleChromeLabs/ProjectVisBug/issues"
   },
   "dependencies": {
     "blingblingjs": "^2.3.0",
-    "colorjs.io": "^0.5.2",
     "hotkeys-js": "^3.13.7"
   },
   "devDependencies": {

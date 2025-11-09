@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VisBug Editor - Mode Test</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+
+      .test-container {
+        margin-bottom: 40px;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      h2 {
+        margin-top: 0;
+        color: #333;
+      }
+
+      .description {
+        color: #666;
+        margin-bottom: 20px;
+        padding: 10px;
+        background: #f9f9f9;
+        border-left: 4px solid #0066cc;
+      }
+
+      .editable-area {
+        min-height: 200px;
+        padding: 20px;
+        border: 2px dashed #ccc;
+        background: #fafafa;
+        position: relative;
+      }
+
+      .inside-mode-container {
+        position: relative;
+        overflow: visible;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .content h3 {
+        color: #0066cc;
+        margin-top: 0;
+      }
+
+      .content p {
+        line-height: 1.6;
+        color: #444;
+      }
+
+      .content img {
+        max-width: 200px;
+        display: block;
+        margin: 10px 0;
+      }
+
+      .toolbar {
+        margin-bottom: 10px;
+      }
+
+      button {
+        padding: 8px 16px;
+        margin-right: 8px;
+        background: #0066cc;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background: #0052a3;
+      }
+
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+
+      .info {
+        margin-top: 10px;
+        padding: 10px;
+        background: #e3f2fd;
+        border-radius: 4px;
+        font-size: 14px;
+        color: #0066cc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>VisBug Editor - Mode Behavior Test</h1>
+
+    <!-- Test 1: Default mode (undefined) - UI appends to body -->
+    <div class="test-container">
+      <h2>Test 1: Default Mode (undefined)</h2>
+      <div class="description">
+        <strong>Behavior:</strong> Editor UI elements (labels, handles, overlays) are appended to
+        <code>document.body</code> <br /><strong>Use case:</strong> Standard behavior, UI overlays
+        can extend beyond container boundaries
+      </div>
+
+      <div class="toolbar">
+        <button id="btn-position-1">Position Tool</button>
+        <button id="btn-text-1">Text Tool</button>
+        <button id="btn-font-1">Font Tool</button>
+        <button id="btn-undo-1" disabled>Undo</button>
+        <button id="btn-redo-1" disabled>Redo</button>
+      </div>
+
+      <div id="container-1" class="editable-area">
+        <div class="content">
+          <!-- <h3>Editable Content - Default Mode</h3> -->
+          <p>
+            Click on any element to select it. The editor UI (handles, labels) will be appended to
+            document.body.
+          </p>
+          <img
+            src="https://placehold.co/600x400"
+            alt="Placeholder"
+          />
+        <!-- </div> -->
+      </div>
+
+      <div class="info" id="info-1">UI Container: document.body | Selected: None</div>
+    </div>
+
+    <!-- Test 2: Inside mode - UI appends to container -->
+    <div class="test-container">
+      <h2>Test 2: Inside Mode</h2>
+      <div class="description">
+        <strong>Behavior:</strong> Editor UI elements are appended to the
+        <code>container</code> element itself <br /><strong>Use case:</strong> Isolated editing
+        areas, UI stays within container bounds, useful for embedded editors
+      </div>
+
+      <div class="toolbar">
+        <button id="btn-position-2">Position Tool</button>
+        <button id="btn-text-2">Text Tool</button>
+        <button id="btn-font-2">Font Tool</button>
+        <button id="btn-undo-2" disabled>Undo</button>
+        <button id="btn-redo-2" disabled>Redo</button>
+      </div>
+
+      <div id="container-2" class="editable-area inside-mode-container" style="max-height: 200px; overflow: auto;">
+        <!-- <div class="content"> -->
+          <h3>Editable Content - Inside Mode</h3>
+          <p>
+            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.            Click on any element to select it. The editor UI (handles, labels) will be appended
+            inside this container.
+          </p>
+          <img
+            src="https://placehold.co/600x400"
+            alt="Placeholder"
+          />
+        <!-- </div> -->
+      </div>
+
+      <div class="info" id="info-2">UI Container: container element | Selected: None</div>
+    </div>
+
+    <script type="module">
+      import { VisBugEditor } from "./dist/visbug-editor.browser.js";
+
+      // Test 1: Default mode (undefined) - UI appends to body
+      const editor1 = new VisBugEditor({
+        container: document.getElementById("container-1"),
+        // mode is undefined (default) - UI appends to document.body
+        initialTool: "position",
+        onSelectionChange: (elements) => {
+          const info = document.getElementById("info-1");
+          info.textContent = `UI Container: document.body | Selected: ${elements.length} element(s)`;
+        },
+        onChange: ({ canUndo, canRedo }) => {
+          document.getElementById("btn-undo-1").disabled = !canUndo;
+          document.getElementById("btn-redo-1").disabled = !canRedo;
+        },
+      });
+
+      // Setup buttons for editor 1
+      document
+        .getElementById("btn-position-1")
+        .addEventListener("click", () => editor1.activateTool("position"));
+      document
+        .getElementById("btn-text-1")
+        .addEventListener("click", () => editor1.activateTool("text"));
+      document
+        .getElementById("btn-font-1")
+        .addEventListener("click", () => editor1.activateTool("font"));
+      document.getElementById("btn-undo-1").addEventListener("click", () => editor1.undo());
+      document.getElementById("btn-redo-1").addEventListener("click", () => editor1.redo());
+
+      // Test 2: Inside mode - UI appends to container
+      const editor2 = new VisBugEditor({
+        container: document.getElementById("container-2"),
+        mode: "inside", // UI appends to container
+        initialTool: "position",
+        onSelectionChange: (elements) => {
+          const info = document.getElementById("info-2");
+          info.textContent = `UI Container: container element | Selected: ${elements.length} element(s)`;
+        },
+        onChange: ({ canUndo, canRedo }) => {
+          document.getElementById("btn-undo-2").disabled = !canUndo;
+          document.getElementById("btn-redo-2").disabled = !canRedo;
+        },
+      });
+
+      // Setup buttons for editor 2
+      document
+        .getElementById("btn-position-2")
+        .addEventListener("click", () => editor2.activateTool("position"));
+      document
+        .getElementById("btn-text-2")
+        .addEventListener("click", () => editor2.activateTool("text"));
+      document
+        .getElementById("btn-font-2")
+        .addEventListener("click", () => editor2.activateTool("font"));
+      document.getElementById("btn-undo-2").addEventListener("click", () => editor2.undo());
+      document.getElementById("btn-redo-2").addEventListener("click", () => editor2.redo());
+
+      console.log("Test Setup:");
+      console.log("Editor 1 - UI Container:", editor1.getUIContainer());
+      console.log("Editor 2 - UI Container:", editor2.getUIContainer());
+    </script>
+  </body>
+</html>

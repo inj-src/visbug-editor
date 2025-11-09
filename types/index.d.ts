@@ -22,16 +22,17 @@ export interface VisBugEditorOptions {
   container: HTMLElement;
 
   /**
-   * Container mode: 'shadowDOM' or 'div'
-   * @default 'shadowDOM'
+   * Where to append editor UI elements (labels, handles, overlays):
+   * - undefined (default): Append to document.body
+   * - 'inside': Append to the container element
    */
-  mode?: "shadowDOM" | "div";
+  mode?: 'inside';
 
   /**
    * Initial tool to activate
    * @default 'position'
    */
-  initialTool?: "position" | "text" | "font";
+  initialTool?: 'position' | 'text' | 'font';
 
   /**
    * Callback when tool changes
@@ -88,7 +89,7 @@ export class VisBugEditor {
   /**
    * Container mode
    */
-  readonly mode: "shadowDOM" | "div";
+  readonly mode: 'inside' | undefined;
 
   /**
    * Initial tool name

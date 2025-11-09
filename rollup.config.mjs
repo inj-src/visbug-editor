@@ -20,9 +20,20 @@ const basePlugins = [
   }),
 ];
 
-const prodPlugins = isProd ? [terser()] : [];
+const prodPlugins = isProd ? [terser({ compress: { drop_console: false } })] : [];
 
 export default [
+  // ESM build for browsers (bundled with deps)
+  {
+    input: "src/index.js",
+    output: {
+      file: "dist/visbug-editor.browser.js",
+      format: "es",
+      sourcemap: !isProd,
+    },
+    plugins: [...basePlugins, ...prodPlugins],
+    external: [], // Bundle everything for browser use
+  },
   // ESM build (for bundlers - with external deps)
   {
     input: "src/index.js",

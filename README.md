@@ -5,6 +5,17 @@ Framework-agnostic visual editing library extracted from [VisBug](https://github
 [![npm version](https://img.shields.io/npm/v/visbug-editor.svg)](https://www.npmjs.com/package/visbug-editor)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+## Overview
+
+`visbug-editor` is a framework-agnostic library that provides inline visual editing capabilities. It allows users to directly manipulate content within a container element, with support for:
+
+- **Position Tool**: Drag-and-drop positioning and arrow key nudging
+- **Text Tool**: Inline text editing with contenteditable
+- **Font Tool**: Typography controls (size, weight, style, spacing)
+- **Image Tool**: Drag and drop image replacement
+
+All operations include full undo/redo support with smart change batching.
+
 ## Features
 
 - **Tools**: Position (drag/arrow keys), Text (contenteditable), Font (typography), Image (drag-drop replacement)
@@ -88,6 +99,8 @@ const editor = new VisBugEditor({
 });
 ```
 
+The container acts as the "editing canvas" boundary.
+
 ## API Reference
 
 ### Constructor Options
@@ -95,7 +108,7 @@ const editor = new VisBugEditor({
 ```typescript
 interface VisBugEditorOptions {
   container: HTMLElement;              // Required: editing canvas
-  mode?: 'shadowDOM' | 'div';          // Default: 'shadowDOM'
+  mode?: 'inside';                     // Where to append UI elements
   initialTool?: 'position' | 'text' | 'font';
   onToolChange?: (tool: string) => void;
   onSelectionChange?: (elements: HTMLElement[]) => void;
@@ -104,6 +117,34 @@ interface VisBugEditorOptions {
   styles?: Record<string, string>;
   clearHistoryOnSetContent?: boolean;
 }
+```
+
+### Mode Option
+
+The `mode` option controls where editor UI elements (labels, handles, overlays) are appended:
+
+**Undefined (default)** - Append to `document.body`
+- UI overlays can extend beyond container boundaries
+- Standard behavior for full-page editing
+- Use when container might have `overflow: hidden` or positioning constraints
+
+```javascript
+const editor = new VisBugEditor({
+  container: document.getElementById('app')
+  // mode undefined - UI appends to document.body
+});
+```
+
+**'inside'** - Append to the container element
+- UI stays within container bounds
+- Useful for isolated editing areas or embedded editors
+- Good for multiple editors on the same page
+
+```javascript
+const editor = new VisBugEditor({
+  container: document.getElementById('app'),
+  mode: 'inside' // UI appends to container
+});
 ```
 
 ### Key Methods
@@ -118,10 +159,47 @@ interface VisBugEditorOptions {
 
 ## Tools
 
-- **Position**: Drag or use arrow keys (1px), Shift+arrow (10px), Alt+arrow (0.5px)
-- **Text**: Click to edit inline with contenteditable
-- **Font**: Cmd/Ctrl+↑/↓ (size), Cmd/Ctrl+Shift+↑/↓ (letter spacing), Alt+↑/↓ (line height), Cmd/Ctrl+B (bold), Cmd/Ctrl+I (italic)
-- **Image**: Drag-drop images onto `<img>` tags to replace
+### Position Tool (Default)
+
+Drag elements to reposition them. Uses keyboard shortcuts for precise control:
+
+- **Arrow Keys** - Move 1px
+- **Shift + Arrow** - Move 10px
+- **Alt + Arrow** - Move 0.5px
+
+Automatically records changes to history for undo/redo.
+
+### Text Tool
+
+Click on any element to edit its text content inline using contenteditable. Press Enter or click outside to finish editing.
+
+### Font Tool
+
+Typography controls with keyboard shortcuts:
+
+**Font Size**
+- `Cmd/Ctrl + Up` - Increase font size
+- `Cmd/Ctrl + Down` - Decrease font size
+
+**Letter Spacing (Kerning)**
+- `Cmd/Ctrl + Shift + Up` - Increase letter spacing
+- `Cmd/Ctrl + Shift + Down` - Decrease letter spacing
+
+**Line Height (Leading)**
+- `Alt + Up` - Increase line height
+- `Alt + Down` - Decrease line height
+
+**Font Weight**
+- `Cmd/Ctrl + B` - Toggle bold
+
+**Font Style**
+- `Cmd/Ctrl + I` - Toggle italic
+
+### Image Swap (Always Active)
+
+Drag and drop images onto any `<img>` tag or element with a background image to replace it. Supports:
+- Direct image URL replacement
+- Custom upload handler via `onImageUpload` callback
 
 ## Examples
 
@@ -175,33 +253,3 @@ onUnmounted(() => {
 });
 </script>
 ```
-
-### Custom Image Upload
-
-```javascript
-const editor = new VisBugEditor({
-  container: document.getElementById('app'),
-  onImageUpload: async (file) => {
-    const formData = new FormData();
-    formData.append('image', file);
-    const { url } = await fetch('/api/upload', { method: 'POST', body: formData }).then(r => r.json());
-    return url;
-  }
-});
-```
-
-## Content Persistence
-
-```javascript
-// Save
-const html = editor.getContent();
-await fetch("/api/save", { method: "POST", body: JSON.stringify({ html }) });
-
-// Load
-const { html } = await fetch("/api/content/123").then(r => r.json());
-editor.setContent(html);
-```
-
-## Browser Support
-
-Chrome/Edge 80+, Firefox 75+, Safari 13.1+ (requires ES6 modules, custom elements, shadow DOM support)

@@ -69,12 +69,11 @@ export class Label extends HTMLElement {
     const position = isFixed ? "fixed" : "absolute";
     this.style.setProperty("--top", `${top}px`);
     this.style.setProperty("--left", `${left}px`);
+
+    //TODO: Need to pass the container
     this.style.setProperty(
       "--max-width",
-      `${
-        boundingRect.width +
-        (window.innerWidth - boundingRect.x - boundingRect.width - 40)
-      }px`
+      `${boundingRect.width + (window.innerWidth - boundingRect.x - boundingRect.width - 40)}px`
     );
     this.style.setProperty("--position", position);
     this.setAttribute("data-original-top", top);

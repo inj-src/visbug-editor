@@ -29,7 +29,7 @@ export class VisBugEditor {
    *
    * @param {Object} options - Configuration options
    * @param {HTMLElement} options.container - The container element whose children will be editable
-   * @param {string} [options.mode='shadowDOM'] - Container mode: 'shadowDOM' or 'div'
+   * @param {string} [options.mode] - Where to append editor UI elements: undefined (body) or 'inside' (container)
    * @param {string} [options.initialTool='position'] - Initial tool to activate
    * @param {Function} [options.onToolChange] - Callback when tool changes
    * @param {Function} [options.onSelectionChange] - Callback when selection changes
@@ -46,7 +46,7 @@ export class VisBugEditor {
 
     // Store configuration
     this.container = options.container;
-    this.mode = options.mode || "shadowDOM";
+    this.mode = options.mode; // undefined or 'inside'
     this.initialTool = options.initialTool || "position";
     this.options = options;
 
@@ -60,8 +60,12 @@ export class VisBugEditor {
     this.currentTool = null;
     this.activeFeature = null;
     this.selectorEngine = null;
-    this.shadowRoot = null;
     this.isInitialized = false;
+
+    // Determine where to append UI elements
+    // undefined (default) = append to body
+    // 'inside' = append to container
+    this.uiContainer = this.mode === 'inside' ? this.container : document.body;
 
     // Initialize history manager
     this.historyManager = new HistoryManager();
@@ -86,9 +90,6 @@ export class VisBugEditor {
    */
   init() {
     try {
-      // Setup container (Shadow DOM or div)
-      this.setupContainer();
-
       // Initialize selection engine
       this.selectorEngine = Selectable(this);
 
@@ -122,39 +123,21 @@ export class VisBugEditor {
   }
 
   /**
-   * Setup the container based on mode (Shadow DOM or div)
+   * Get the editing context (container)
    * @private
+   * @returns {HTMLElement}
    */
-  setupContainer() {
-    if (this.mode === "shadowDOM") {
-      // Check if Shadow DOM is supported
-      if (!this.container.attachShadow) {
-        console.warn("Shadow DOM not supported, falling back to div mode");
-        this.mode = "div";
-        return;
-      }
-
-      // Create shadow root if it doesn't exist
-      if (!this.container.shadowRoot) {
-        this.shadowRoot = this.container.attachShadow({ mode: "open" });
-
-        // Move existing children into shadow root
-        const children = Array.from(this.container.childNodes);
-        children.forEach((child) => this.shadowRoot.appendChild(child));
-      } else {
-        this.shadowRoot = this.container.shadowRoot;
-      }
-    }
-    // For div mode, we use the container directly
+  getEditingContext() {
+    return this.container;
   }
 
   /**
-   * Get the editing context (shadow root or container)
+   * Get the UI container (where editor elements are appended)
    * @private
-   * @returns {HTMLElement|ShadowRoot}
+   * @returns {HTMLElement}
    */
-  getEditingContext() {
-    return this.mode === "shadowDOM" ? this.shadowRoot : this.container;
+  getUIContainer() {
+    return this.uiContainer;
   }
 
   /**
@@ -365,8 +348,8 @@ export class VisBugEditor {
    * @private
    */
   removeEditorUI() {
-    const context = this.getEditingContext();
-    const editorElements = context.querySelectorAll(
+    const ui = this.getUIContainer();
+    const editorElements = ui.querySelectorAll(
       "visbug-handles, visbug-label, visbug-hover, visbug-overlay, [data-visbug-ignore]"
     );
     editorElements.forEach((el) => el.remove());
